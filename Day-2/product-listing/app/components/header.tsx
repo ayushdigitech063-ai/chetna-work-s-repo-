@@ -2,44 +2,46 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="border-b bg-white shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-        
+    <header className="site-header">
+      <div className="header-container">
+
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-2xl font-bold text-blue-600"
-        >
-          ShopEase
+        <Link href="/" className="logo">
+          <span className="logo-icon">S</span>
+          <span className="logo-text">ShopEase</span>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="font-medium text-gray-700 transition hover:text-blue-600"
-          >
+        <nav className="navigation">
+
+          <Link href="/" className="nav-link">
             Home
           </Link>
 
           <Link
+            href="/products"
+            className="nav-link"
+          >
+            Products
+          </Link>
+
+          <Link
             href="/login"
-            className="font-medium text-gray-700 transition hover:text-blue-600"
+            className="nav-link"
           >
             Login
           </Link>
 
           <Link
             href="/signup"
-            className="rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700"
+            className="signup-button"
           >
             Sign Up
           </Link>
+
         </nav>
 
       </div>
     </header>
   );
 }
-
-

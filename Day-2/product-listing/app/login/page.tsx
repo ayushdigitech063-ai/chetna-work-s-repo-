@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+//import Header from "@/components/Header";
+//import Footer from "@/components/Footer";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,8 +11,23 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email){
+        alert("Please enter the email");
+        return;
+    }
+    if (!email.includes("@")){
+        alert("please enter a valid email")
+        return;
+    }
+    if (password.length<6){
+        alert("password must be at least 6")
+    }
+
     alert("Login submitted!");
-  };
+    }
+
+
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-100">
@@ -80,12 +97,13 @@ export default function LoginPage() {
                     Password
                   </label>
 
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
-                  >
-                    Forgot Password?
-                  </a>
+                  <Link
+  href="/ForgotPassword"
+  
+  className="text-sm font-medium text-blue-600 hover:text-blue-700"
+>
+  Forgot Password?
+</Link>
                 </div>
 
                 <input

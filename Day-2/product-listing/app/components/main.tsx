@@ -3,161 +3,288 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default function Main() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+const products = [
+  {
+    id: 1,
+    name: "Wireless Headphones",
+    category: "Electronics",
+    price: 2499,
+    description: "High-quality wireless headphones with clear sound.",
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
+  },
+  {
+    id: 2,
+    name: "Smart Watch",
+    category: "Electronics",
+    price: 3999,
+    description: "Smart watch with fitness and health tracking.",
+    image:
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+  },
+  {
+    id: 3,
+    name: "Cotton T-Shirt",
+    category: "Clothing",
+    price: 799,
+    description: "Comfortable cotton t-shirt for everyday wear.",
+    image:
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
+  },
+  {
+    id: 4,
+    name: "Denim Jacket",
+    category: "Clothing",
+    price: 1899,
+    description: "Stylish denim jacket with a modern design.",
+    image:
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5",
+  },
+  {
+    id: 5,
+    name: "Leather Wallet",
+    category: "Accessories",
+    price: 999,
+    description: "Premium leather wallet with multiple card slots.",
+    image:
+      "https://images.unsplash.com/photo-1627123424574-724758594e93",
+  },
+  {
+    id: 6,
+    name: "Sunglasses",
+    category: "Accessories",
+    price: 1299,
+    description: "Classic sunglasses with UV protection.",
+    image:
+      "https://images.unsplash.com/photo-1511499767150-a48a237f0083",
+  },
+  {
+    id: 7,
+    name: "Bluetooth Speaker",
+    category: "Electronics",
+    price: 1599,
+    description: "Portable speaker with powerful sound.",
+    image:
+      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1",
+  },
+  {
+    id: 8,
+    name: "Running Shoes",
+    category: "Clothing",
+    price: 2299,
+    description: "Comfortable running shoes for daily workouts.",
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+  },
+];
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
+export default function ProductsPage() {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All Categories");
+  const [sort, setSort] = useState("default");
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+  let filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
 
-    alert("Account created successfully!");
-  };
+    const matchesCategory =
+      category === "All Categories" ||
+      product.category === category;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  if (sort === "low-high") {
+    filteredProducts.sort((a, b) => a.price - b.price);
+  }
+
+  if (sort === "high-low") {
+    filteredProducts.sort((a, b) => b.price - a.price);
+  }
+
+  if (sort === "name") {
+    filteredProducts.sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4 py-12">
-      
-      <div className="flex min-h-screen items-center justify-center">
-        
-        {/* Signup Card */}
-        <div className="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl sm:p-10">
+    <div className="shop-page">
 
-          {/* Heading */}
-          <div className="mb-8 text-center">
+   
 
-            <h1 className="text-4xl font-bold text-blue-600">
-              ShopEase
-            </h1>
+      {/* ================= MAIN ================= */}
+      <main className="products-main">
 
-            <h2 className="mt-5 text-3xl font-bold text-gray-900">
-              Create Account
-            </h2>
+        {/* Hero Heading */}
+        <section className="products-heading">
 
-            <p className="mt-3 text-gray-500">
-              Sign up to get started
-            </p>
+          <p className="small-heading">
+            DISCOVER OUR COLLECTION
+          </p>
 
+          <h2>Our Products</h2>
+
+          <p className="heading-description">
+            Explore our collection of quality products designed
+            for your everyday needs.
+          </p>
+
+        </section>
+
+
+        {/* ================= FILTERS ================= */}
+        <section className="filter-section">
+
+          {/* Search */}
+          <div className="search-box">
+            <span className="search-icon">⌕</span>
+
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSignup}>
 
-            {/* Full Name */}
-            <div className="mb-6">
-              <label
-                htmlFor="name"
-                className="mb-3 block text-sm font-semibold text-gray-700"
+          {/* Category */}
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="filter-select"
+          >
+            <option>All Categories</option>
+            <option>Electronics</option>
+            <option>Clothing</option>
+            <option>Accessories</option>
+          </select>
+
+
+          {/* Sort */}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="filter-select"
+          >
+            <option value="default">Sort By</option>
+            <option value="low-high">
+              Price: Low to High
+            </option>
+            <option value="high-low">
+              Price: High to Low
+            </option>
+            <option value="name">
+              Name: A to Z
+            </option>
+          </select>
+
+        </section>
+
+
+        {/* ================= PRODUCT AREA ================= */}
+        <section className="product-section">
+
+          <div className="product-count">
+            <span>{filteredProducts.length}</span> Products
+          </div>
+
+
+          <div className="product-grid">
+
+            {filteredProducts.map((product) => (
+
+              <div
+                key={product.id}
+                className="product-card"
               >
-                Full Name
-              </label>
 
-              <input
-                id="name"
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
+                <div className="product-image-container">
 
-            {/* Email */}
-            <div className="mb-6">
-              <label
-                htmlFor="email"
-                className="mb-3 block text-sm font-semibold text-gray-700"
-              >
-                Email Address
-              </label>
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="product-image"
+                  />
 
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
+                </div>
 
-            {/* Password */}
-            <div className="mb-6">
-              <label
-                htmlFor="password"
-                className="mb-3 block text-sm font-semibold text-gray-700"
-              >
-                Password
-              </label>
 
-              <input
-                id="password"
-                type="password"
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
+                <div className="product-details">
 
-            {/* Confirm Password */}
-            <div className="mb-8">
-              <label
-                htmlFor="confirmPassword"
-                className="mb-3 block text-sm font-semibold text-gray-700"
-              >
-                Confirm Password
-              </label>
+                  <p className="product-category">
+                    {product.category}
+                  </p>
 
-              <input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
+                  <h2>{product.name}</h2>
 
-            {/* Button */}
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-blue-600 px-5 py-4 font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
-            >
-              Create Account
-            </button>
+                  <p className="product-price">
+                    ₹{product.price}
+                  </p>
 
-          </form>
+                  <p className="product-description">
+                    {product.description}
+                  </p>
 
-          {/* Login Link */}
-          <div className="mt-8 border-t border-gray-200 pt-6 text-center">
+                  <button className="details-button">
+                    View Details
+                  </button>
 
-            <p className="text-sm text-gray-600">
-              Already have an account?
-            </p>
+                </div>
 
+              </div>
+
+            ))}
+{/* VIEW MORE BUTTON */}
+
+            {/* ================= 9TH VIEW MORE CARD ================= 
             <Link
-              href="/login"
-              className="mt-2 inline-block font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+              href="/products/all"
+              className="view-more-card"
             >
-              Login
-            </Link>
+
+              <div className="view-more-icon">
+                →
+              </div>
+
+              <h2>View More Products</h2>
+
+              <p>
+                Explore our complete collection
+                of products.
+              </p>
+
+              <span className="view-more-button">
+                Explore All Products →
+              </span>
+
+            </Link>*/}
 
           </div>
+<div className="mt-12 flex w-full justify-center">
+  <Link
+    href="/products"
+    className="group flex w-fit items-center gap-3 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/40"
+  >
+    <span className="text-xl">🛒</span>
 
-        </div>
+    <span className="whitespace-nowrap">
+      View More Products
+    </span>
 
-      </div>
+    <span className="text-xl transition-transform duration-300 group-hover:translate-x-1">
+      →
+    </span>
+  </Link>
+</div>
+        </section>
 
-    </main>
+      </main>
+
+
+     
+    </div>
   );
 }
