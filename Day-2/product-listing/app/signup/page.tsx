@@ -2,23 +2,57 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { fetchFromBackend } from "@/lib/api";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+  setError("");
+
+  if (password !== confirmPassword) {
+    setError("Passwords do not match!");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const data = await fetchFromBackend("/auth/signup", {
+      method: "POST",
+
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        confirmPassword
+      }),
+    });
+
+    console.log("Signup successful:", data);
 
     alert("Account created successfully!");
-  };
+
+  } catch (error) {
+    console.error("Signup error:", error);
+
+    if (error instanceof Error) {
+      setError(error.message);
+    } else {
+      setError("Something went wrong. Please try again.");
+    }
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4 py-12">
@@ -47,6 +81,11 @@ export default function SignupPage() {
 
           {/* Form */}
           <form onSubmit={handleSignup}>
+            {error && (
+  <div className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+    {error}
+  </div>
+)}
 
             {/* Full Name */}
             <div className="mb-6">
@@ -138,11 +177,13 @@ export default function SignupPage() {
 
             {/* Signup Button */}
             <button
-              type="submit"
-              className="w-full rounded-xl bg-blue-600 px-5 py-4 font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
-            >
-              Create Account
-            </button>
+  type="submit"
+  disabled={loading}
+  className="w-full rounded-xl bg-blue-600 px-5 py-4 font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+>
+  {loading ? "Creating Account..." : "Create Account"}
+</button>
+           
 
           </form>
 

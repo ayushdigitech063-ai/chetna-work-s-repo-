@@ -2,30 +2,74 @@
 
 import { useState } from "react";
 import Link from "next/link";
+
+import { useRouter } from "next/navigation";
+import { fetchFromBackend } from "@/lib/api";
+
 //import Header from "@/components/Header";
 //import Footer from "@/components/Footer";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email){
-        alert("Please enter the email");
-        return;
-    }
-    if (!email.includes("@")){
-        alert("please enter a valid email")
-        return;
-    }
-    if (password.length<6){
-        alert("password must be at least 6")
+    setError("");
+
+    if (!email) {
+      setError("Please enter the email");
+      return;
     }
 
-    alert("Login submitted!");
+    if (!email.includes("@")) {
+      setError("Please enter a valid email");
+      return;
     }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const data = await fetchFromBackend("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      console.log("Login response:", data);
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      alert("Login successful!");
+
+      router.push("/products");
+
+    } catch (error) {
+      console.error("Login error:", error);
+
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
 
@@ -63,7 +107,11 @@ export default function LoginPage() {
           <div className="rounded-2xl border border-slate-100 bg-white p-6 sm:p-8">
 
             <form onSubmit={handleLogin}>
-
+              {error && (
+                <div className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                  {error}
+                </div>
+              )}
               {/* Email */}
               <div className="mb-8">
                 <label
@@ -98,12 +146,12 @@ export default function LoginPage() {
                   </label>
 
                   <Link
-  href="/ForgotPassword"
-  
-  className="text-sm font-medium text-blue-600 hover:text-blue-700"
->
-  Forgot Password?
-</Link>
+                    href="/ForgotPassword"
+
+                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    Forgot Password?
+                  </Link>
                 </div>
 
                 <input
@@ -136,9 +184,10 @@ export default function LoginPage() {
               {/* Login */}
               <button
                 type="submit"
-                className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:from-blue-700 hover:to-blue-600"
+                disabled={loading}
+                className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-blue-200 transition hover:from-blue-700 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
 
             </form>
